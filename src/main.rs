@@ -1,29 +1,7 @@
-use std::env;
 use std::fs;
-use std::path::Path;
 use std::vec::Vec;
-use rand::seq::SliceChooseIter;
-use rand::thread_rng;
 use rand::Rng;
 use std::io;
-
-const CHANCES: u8 = 5;
-
-struct Pessoa {
-    cabeca: bool,
-    braco_esquerdo: bool,
-    braco_direito: bool,
-    perna_esquerda: bool,
-    perna_direita: bool
-}
-
-struct Jogo {
-    chances: u8,
-    palavra: String,
-    status: u8,
-    dica: String,
-    acertos: String
-}
 
 fn listar_animais() -> Vec<Vec<char>> {
     let arquivo = fs::read_to_string("./data/animais.txt").expect("Não foi possível abrir o arquivo!");
@@ -74,10 +52,6 @@ fn mostrar_acertos_tela(acertos: &Vec<char>) {
     println!("\n");
 }
 
-fn checar_vitoria(acertos: &Vec<char>, palavra: &Vec<char>) -> bool {
-    acertos == palavra 
-}
-
 fn mostrar_palpites_anteriores_tela(palpites_anteriores: &Vec<char>) {
     print!("[");
     for palpite_anterior in palpites_anteriores {
@@ -101,6 +75,8 @@ fn verificar_palpites_anteriores(palpites_anteriores: &Vec<char>, palpite: char)
 }
 
 fn main() {
+    print!("{}[2J", 27 as char);
+
     let mut acertos: Vec<char> = vec![];
 
     let mut chances: u8 = 5;
@@ -118,6 +94,7 @@ fn main() {
     println!("A dica é:\nÉ um animal!");
 
     loop {
+
         if chances == 0 {
             println!("Você perdeu!");
             break
@@ -127,6 +104,8 @@ fn main() {
             io::stdin()
                 .read_line(&mut palpite)
                 .expect("Não foi possível ler seu palpite");
+                
+            print!("{}[2J", 27 as char);
             
             let palpite: Vec<char> = palpite.trim().chars().collect();
 
@@ -138,7 +117,7 @@ fn main() {
                     palpites_anteriores.push(palpite);
     
                     if !acertou {
-                        println!("Você não acertou seu palpite!");
+                        println!("Você errou a letra!");
                         chances -= 1;
                     }
                 } else {
@@ -151,10 +130,19 @@ fn main() {
                     chances -= 1;
                 }
                 else {
-                    println!("Para Bens você ganou!");
+                    println!("Para Bens você ganhou!");
                     break;
                 }
             }
+
+            if chances > 1 {
+                println!("Restam {} chances", chances);
+            } else {
+                println!("Resta uma chance");
+            }
+
+            mostrar_palpites_anteriores_tela(&palpites_anteriores);
+
             mostrar_acertos_tela(&mut acertos);
         }
     }
