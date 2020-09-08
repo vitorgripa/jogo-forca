@@ -74,8 +74,13 @@ fn verificar_palpites_anteriores(palpites_anteriores: &Vec<char>, palpite: char)
     achou
 }
 
-fn main() {
+fn limpar_terminal() {
+    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
     print!("{}[2J", 27 as char);
+}
+
+fn main() {
+    limpar_terminal();
 
     let mut acertos: Vec<char> = vec![];
 
@@ -105,7 +110,7 @@ fn main() {
                 .read_line(&mut palpite)
                 .expect("Não foi possível ler seu palpite");
                 
-            print!("{}[2J", 27 as char);
+            limpar_terminal();
             
             let palpite: Vec<char> = palpite.trim().chars().collect();
 
